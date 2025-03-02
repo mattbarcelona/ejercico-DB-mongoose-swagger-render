@@ -1,13 +1,23 @@
-const express = require('express');
+const express = require("express");
+const dbConnection = require("./config/config");
+const swaggerUI = require("swagger-ui-express");
+const docs = require("./docs/index");
+
 const app = express();
-const PORT = 8080;
-const { dbConnection } = require('./config/config');
-const routes = require('./routes');
+require("dotenv").config();
+
+const PORT = process.env.PORT || 3000;
+const routes = require("./routes/tasks");
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use('/', routes);
+app.use("/", routes);
 
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(docs));
 
 dbConnection();
 
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Express está escuchando en el puerto http://localhost:${PORT}`);
+});
